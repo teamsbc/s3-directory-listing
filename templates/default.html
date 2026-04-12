@@ -81,12 +81,12 @@
                     <td class="size">-</td>
                 </tr>
                 {{ end }}
-                {{ range .Files }}
+                {{ range .Files }}{{ if ne .Name "index.html" }}
                 <tr>
                     <td><a href="{{ .Name }}"><span class="icon">📄</span>{{ .Name }}</a></td>
                     <td class="size">{{ .Size }} bytes</td>
                 </tr>
-                {{ end }}
+                {{ end }}{{ end }}
             </tbody>
         </table>
     </div>
