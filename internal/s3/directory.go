@@ -2,6 +2,7 @@ package s3
 
 import (
 	"path"
+	"sort"
 	"strings"
 )
 
@@ -86,6 +87,15 @@ func BuildDirectoryStructure(objects []Object) map[string]*DirectoryListing {
 				})
 			}
 		}
+	}
+
+	for _, listing := range directories {
+		sort.Slice(listing.Directories, func(i, j int) bool {
+			return listing.Directories[i].Name < listing.Directories[j].Name
+		})
+		sort.Slice(listing.Files, func(i, j int) bool {
+			return listing.Files[i].Name < listing.Files[j].Name
+		})
 	}
 
 	return directories

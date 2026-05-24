@@ -117,6 +117,34 @@ func TestBuildDirectoryStructure_FilesAndDirectories(t *testing.T) {
 	}
 }
 
+func TestBuildDirectoryStructure_Sorting(t *testing.T) {
+	objects := []Object{
+		{Key: "zebra.txt", Size: 100},
+		{Key: "apple.txt", Size: 200},
+		{Key: "mango.txt", Size: 300},
+		{Key: "gamma/file.txt", Size: 400},
+		{Key: "alpha/file.txt", Size: 500},
+		{Key: "beta/file.txt", Size: 600},
+	}
+
+	dirs := BuildDirectoryStructure(objects)
+	root := dirs[""]
+
+	wantFiles := []string{"apple.txt", "mango.txt", "zebra.txt"}
+	for i, want := range wantFiles {
+		if root.Files[i].Name != want {
+			t.Errorf("root.Files[%d].Name = %s, want %s", i, root.Files[i].Name, want)
+		}
+	}
+
+	wantDirs := []string{"alpha", "beta", "gamma"}
+	for i, want := range wantDirs {
+		if root.Directories[i].Name != want {
+			t.Errorf("root.Directories[%d].Name = %s, want %s", i, root.Directories[i].Name, want)
+		}
+	}
+}
+
 func TestBuildDirectoryStructure_FileSizes(t *testing.T) {
 	objects := []Object{
 		{Key: "file1.txt", Size: 1234},
