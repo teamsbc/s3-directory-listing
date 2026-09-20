@@ -8,6 +8,7 @@ import (
 
 type DirectoryEntry struct {
 	Name string
+	Key  string
 	Size int64
 }
 
@@ -55,6 +56,7 @@ func BuildDirectoryStructure(objects []Object) map[string]*DirectoryListing {
 
 		directories[dir].Files = append(directories[dir].Files, DirectoryEntry{
 			Name: path.Base(obj.Key),
+			Key:  obj.Key,
 			Size: obj.Size,
 		})
 	}

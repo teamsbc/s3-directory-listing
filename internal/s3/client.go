@@ -2,6 +2,7 @@ package s3
 
 import (
 	"context"
+	"io"
 	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -53,6 +54,19 @@ func NewClient(ctx context.Context, bucket string, profile string) (*Client, err
 type Object struct {
 	Key  string
 	Size int64
+}
+
+func (c *Client) GetObjectContent(ctx context.Context, key string) ([]byte, error) {
+	resp, err := c.s3Client.GetObject(ctx, &s3.GetObjectInput{
+		Bucket: aws.String(c.bucket),
+		Key:    aws.String(key),
+	})
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	return io.ReadAll(resp.Body)
 }
 
 func (c *Client) ListAllObjects(ctx context.Context) ([]Object, error) {

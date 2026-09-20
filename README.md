@@ -81,6 +81,7 @@ s3-directory-listing create <bucket-name> <template-file> [flags]
 
 - `-o, --output`: Output directory for generated listings (default: current directory)
 - `-p, --profile`: AWS profile to use from config file
+- `--sha256sums`: Generate `SHA256SUMS` files from `.sha256` files found in each directory
 
 ### Examples
 

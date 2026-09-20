@@ -12,8 +12,9 @@ import (
 )
 
 var (
-	outputDir string
-	profile   string
+	outputDir  string
+	profile    string
+	sha256sums bool
 )
 
 var createCmd = &cobra.Command{
@@ -29,6 +30,7 @@ func init() {
 	rootCmd.AddCommand(createCmd)
 	createCmd.Flags().StringVarP(&outputDir, "output", "o", ".", "Output directory for generated listings")
 	createCmd.Flags().StringVarP(&profile, "profile", "p", "", "AWS profile to use from config file")
+	createCmd.Flags().BoolVar(&sha256sums, "sha256sums", false, "Generate SHA256SUMS files from .sha256 files")
 }
 
 func runCreate(cmd *cobra.Command, args []string) error {
@@ -96,6 +98,20 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		}
 
 		fmt.Printf("  Created: %s\n", outPath)
+
+		if sha256sums {
+			content, err := s3.GenerateSHA256SUMS(ctx, client, listing)
+			if err != nil {
+				return fmt.Errorf("failed to generate SHA256SUMS for %s: %w", dirPath, err)
+			}
+			if content != "" {
+				sumsPath := filepath.Join(filepath.Dir(outPath), "SHA256SUMS")
+				if err := os.WriteFile(sumsPath, []byte(content), 0644); err != nil {
+					return fmt.Errorf("failed to write SHA256SUMS for %s: %w", dirPath, err)
+				}
+				fmt.Printf("  Created: %s\n", sumsPath)
+			}
+		}
 	}
 
 	fmt.Println("Done!")
